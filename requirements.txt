@@ -1,0 +1,17 @@
+# requirements.txt
+
+# Backend dependencies
+fastapi
+uvicorn
+bleak
+pydantic
+websockets
+python-multipart
+
+# Frontend dependencies
+streamlit
+requests
+pandas
+plotly
+websocket-client
+nest-asyncio
