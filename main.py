@@ -12,13 +12,19 @@ import threading
 from bleak import BleakScanner, BleakClient
 from bleak.exc import BleakError
 import uvicorn
+import streamlit as st
+import sys
+from ui import scan_devices, connect_to_device, disconnect_device, process_queued_data
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("smartwatch.main")
 
 # Constants for Bluetooth services and characteristics
 # These UUIDs are standard for heart rate monitoring and may need adjustment for specific devices
@@ -110,11 +116,18 @@ async def broadcast_data():
     with data_lock:
         data_to_send = device_data.dict()
     
-    for connection in active_connections:
-        try:
-            await connection.send_json(data_to_send)
-        except Exception as e:
-            logger.error(f"Error sending data to WebSocket: {e}")
+    # Only broadcast if there are connections
+    if active_connections:
+        logger.info(f"Broadcasting data to {len(active_connections)} WebSocket clients: {data_to_send}")
+        
+        for connection in active_connections:
+            try:
+                await connection.send_json(data_to_send)
+            except Exception as e:
+                logger.error(f"Error sending data to WebSocket: {e}")
+                # Remove failed connections
+                if connection in active_connections:
+                    active_connections.remove(connection)
 
 @app.get("/")
 async def root():
@@ -280,5 +293,24 @@ async def shutdown_event():
     
     logger.info("Shutting down Smartwatch Data Collection API")
 
+def main():
+    # Initialize session state for app refresh control
+    if 'last_update' not in st.session_state:
+        st.session_state.last_update = time.time()
+    
+    # Import and run the Streamlit UI module
+    from ui import st
+
+    # Ensure we process any new data that came in
+    if st.session_state.get('connected', False):
+        logger.debug("Processing queued data in main loop")
+        update_happened = process_queued_data()
+        
+        # If data was updated, note the time
+        if update_happened:
+            st.session_state.last_update = time.time()
+            logger.info("Data updated, refreshing display")
+
 if __name__ == "__main__":
+    main()
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

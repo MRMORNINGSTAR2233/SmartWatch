@@ -1,17 +1,16 @@
-# streamlit_app.py - Streamlit UI for Smartwatch Data Collection
+# streamlit_app.py - Thread-Safe Streamlit UI for Smartwatch Data Collection
 
 import streamlit as st
 import requests
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import time
 import json
-import asyncio
 import threading
-import nest_asyncio
-from websocket import create_connection
+import queue
+import websocket
 import logging
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,32 +20,44 @@ logger = logging.getLogger(__name__)
 API_BASE_URL = "http://localhost:8000"
 WS_URL = "ws://localhost:8000/ws"
 
+# Create a global queue for thread-safe communication between WebSocket and main thread
+ws_data_queue = queue.Queue()
+
 # Initialize session state variables
+if 'data_queue' not in st.session_state:
+    st.session_state.data_queue = queue.Queue()
 if 'connected' not in st.session_state:
     st.session_state.connected = False
 if 'device_address' not in st.session_state:
     st.session_state.device_address = None
 if 'data_history' not in st.session_state:
     st.session_state.data_history = pd.DataFrame(columns=['timestamp', 'heart_rate', 'steps'])
-if 'ws_connection' not in st.session_state:
-    st.session_state.ws_connection = None
+if 'devices' not in st.session_state:
+    st.session_state.devices = []
+if 'latest_heart_rate' not in st.session_state:
+    st.session_state.latest_heart_rate = "N/A"
+if 'latest_steps' not in st.session_state:
+    st.session_state.latest_steps = "N/A"
+if 'ws_active' not in st.session_state:
+    st.session_state.ws_active = False
 
-# Apply nest_asyncio to make async work in Streamlit
-nest_asyncio.apply()
+# Global WebSocket object (outside of session state)
+ws_app = None
+ws_thread = None
 
 # Function to scan for devices
 def scan_devices():
     try:
         response = requests.get(f"{API_BASE_URL}/devices")
         if response.status_code == 200:
-            devices = response.json()
-            return devices
+            st.session_state.devices = response.json()
+            return True
         else:
             st.error(f"Error scanning devices: {response.text}")
-            return []
+            return False
     except Exception as e:
         st.error(f"Connection error: {e}")
-        return []
+        return False
 
 # Function to connect to a device
 def connect_to_device(device_address):
@@ -56,8 +67,8 @@ def connect_to_device(device_address):
             st.session_state.connected = True
             st.session_state.device_address = device_address
             
-            # Start WebSocket connection
-            setup_websocket_connection()
+            # Start WebSocket connection in a thread-safe way
+            start_websocket_connection()
             
             return True
         else:
@@ -70,9 +81,8 @@ def connect_to_device(device_address):
 # Function to disconnect from device
 def disconnect_device():
     try:
-        if st.session_state.ws_connection:
-            st.session_state.ws_connection.close()
-            st.session_state.ws_connection = None
+        # Stop WebSocket first
+        stop_websocket_connection()
         
         response = requests.get(f"{API_BASE_URL}/disconnect")
         if response.status_code == 200:
@@ -86,80 +96,137 @@ def disconnect_device():
         st.error(f"Disconnection error: {e}")
         return False
 
-# Function to get the latest data
-def get_latest_data():
+# WebSocket message handler - puts data in queue instead of accessing session state
+def on_message(ws, message):
     try:
-        response = requests.get(f"{API_BASE_URL}/data")
-        if response.status_code == 200:
-            return response.json()
-        else:
-            st.error(f"Error getting data: {response.text}")
-            return None
-    except Exception as e:
-        st.error(f"Data retrieval error: {e}")
-        return None
-
-# Function to update data in a separate thread
-def websocket_thread():
-    try:
-        while st.session_state.connected and st.session_state.ws_connection:
-            try:
-                message = st.session_state.ws_connection.recv()
-                if message:
-                    data = json.loads(message)
-                    process_new_data(data)
-            except Exception as e:
-                logger.error(f"WebSocket error: {e}")
-                time.sleep(1)  # Prevent tight loop on error
-    except Exception as e:
-        logger.error(f"WebSocket thread error: {e}")
-
-# Setup WebSocket connection
-def setup_websocket_connection():
-    try:
-        # Close existing connection if any
-        if st.session_state.ws_connection:
-            st.session_state.ws_connection.close()
+        data = json.loads(message)
+        logger.info(f"Received data: {data}")
         
+        # Format the data
+        new_data = {
+            'timestamp': datetime.fromtimestamp(data.get('timestamp', time.time())),
+            'heart_rate': data.get('heart_rate'),
+            'steps': data.get('steps')
+        }
+        
+        # Instead of accessing session state directly, use a global variable
+        # or pass data through a thread-safe mechanism
+        global ws_data_queue
+        if not hasattr(globals(), 'ws_data_queue'):
+            ws_data_queue = queue.Queue()
+        
+        ws_data_queue.put(new_data)
+        
+    except Exception as e:
+        logger.error(f"Error processing WebSocket message: {e}")
+
+def on_error(ws, error):
+    logger.error(f"WebSocket error: {error}")
+
+def on_close(ws, close_status_code, close_msg):
+    logger.info(f"WebSocket connection closed: {close_msg}")
+    st.session_state.ws_active = False
+
+def on_open(ws):
+    logger.info("WebSocket connection established")
+    st.session_state.ws_active = True
+
+def start_websocket_connection():
+    """Start WebSocket connection in a separate thread"""
+    global ws_app, ws_thread
+    
+    # Make sure any existing connection is closed
+    stop_websocket_connection()
+    
+    try:
         # Create new connection
-        ws = create_connection(WS_URL)
-        st.session_state.ws_connection = ws
+        ws_app = websocket.WebSocketApp(
+            WS_URL,
+            on_open=on_open,
+            on_message=on_message,
+            on_error=on_error,
+            on_close=on_close
+        )
         
-        # Start listener thread
-        thread = threading.Thread(target=websocket_thread, daemon=True)
-        thread.start()
+        # Start in a new thread
+        ws_thread = threading.Thread(target=ws_app.run_forever)
+        ws_thread.daemon = True
+        ws_thread.start()
         
-        return True
+        st.session_state.ws_active = True
+        logger.info("WebSocket thread started")
+        
     except Exception as e:
-        st.error(f"WebSocket connection error: {e}")
-        return False
+        logger.error(f"Failed to start WebSocket: {e}")
 
-# Process new data received from WebSocket
-def process_new_data(data):
-    if not data:
-        return
+def stop_websocket_connection():
+    """Safely stop WebSocket connection"""
+    global ws_app, ws_thread
     
-    # Convert timestamp to datetime for better display
-    import datetime
-    dt = datetime.datetime.fromtimestamp(data['timestamp'])
-    
-    # Create new row for DataFrame
-    new_data = pd.DataFrame([{
-        'timestamp': dt,
-        'heart_rate': data['heart_rate'],
-        'steps': data['steps']
-    }])
-    
-    # Append to history (use lock if needed for thread safety)
-    st.session_state.data_history = pd.concat([st.session_state.data_history, new_data])
-    
-    # Keep only the last 100 records to avoid memory issues
-    if len(st.session_state.data_history) > 100:
-        st.session_state.data_history = st.session_state.data_history.iloc[-100:]
+    try:
+        if ws_app:
+            ws_app.close()
+        
+        # Wait for thread to finish if it exists
+        if ws_thread and ws_thread.is_alive():
+            ws_thread.join(timeout=1.0)
+            
+        ws_app = None
+        ws_thread = None
+        st.session_state.ws_active = False
+        
+    except Exception as e:
+        logger.error(f"Error stopping WebSocket: {e}")
 
-# App UI
+# Process any data that arrived via the queue
+def process_queued_data():
+    """Process any data that arrived in the queue"""
+    global ws_data_queue
+    queue_size = ws_data_queue.qsize()
+    update_happened = False
+    
+    # Log the current queue size
+    if queue_size > 0:
+        logger.info(f"Processing {queue_size} queued data items")
+    
+    for _ in range(queue_size):
+        try:
+            # Get data from the queue (non-blocking)
+            new_data = ws_data_queue.get_nowait()
+            
+            # Update the latest values
+            if 'heart_rate' in new_data and new_data['heart_rate'] is not None:
+                st.session_state.latest_heart_rate = f"{new_data['heart_rate']} BPM"
+                logger.info(f"Updated heart rate: {st.session_state.latest_heart_rate}")
+            
+            if 'steps' in new_data and new_data['steps'] is not None:
+                st.session_state.latest_steps = f"{new_data['steps']}"
+                logger.info(f"Updated steps: {st.session_state.latest_steps}")
+            
+            # Add to the history dataframe
+            new_row = pd.DataFrame([new_data])
+            st.session_state.data_history = pd.concat([st.session_state.data_history, new_row], ignore_index=True)
+            
+            # Keep last 100 records to avoid memory issues
+            if len(st.session_state.data_history) > 100:
+                st.session_state.data_history = st.session_state.data_history.iloc[-100:]
+                
+            # Mark that we had an update
+            update_happened = True
+            ws_data_queue.task_done()
+            
+        except queue.Empty:
+            break
+    
+    return update_happened
+
+# Main Streamlit UI
 st.title("Smartwatch Data Collection")
 st.write("Connect to your smartwatch and monitor heart rate and steps in real-time.")
+
+# Check for new data at each rerun
+if st.session_state.connected:
+    process_queued_data()
 
 # Device connection section
 st.header("Device Connection")
@@ -169,12 +236,10 @@ col1, col2 = st.columns(2)
 with col1:
     if st.button("Scan for Devices", use_container_width=True):
         with st.spinner("Scanning..."):
-            devices = scan_devices()
-            if devices:
-                st.session_state.devices = devices
-                st.success(f"Found {len(devices)} devices")
+            if scan_devices():
+                st.success(f"Found {len(st.session_state.devices)} devices")
             else:
-                st.warning("No devices found")
+                st.warning("No devices found or error occurred")
 
 with col2:
     if st.session_state.connected:
@@ -182,94 +247,82 @@ with col2:
             with st.spinner("Disconnecting..."):
                 if disconnect_device():
                     st.success("Device disconnected")
+                    st.rerun()
     else:
         st.button("Connect", disabled=True, use_container_width=True)
 
 # Display available devices if any
-if not st.session_state.connected and 'devices' in st.session_state and st.session_state.devices:
+if not st.session_state.connected and st.session_state.devices:
     st.subheader("Available Devices")
     
-    for device in st.session_state.devices:
+    for i, device in enumerate(st.session_state.devices):
         col1, col2 = st.columns([3, 1])
         with col1:
             device_name = device.get('name', 'Unknown')
             device_address = device.get('address', '')
             st.write(f"**{device_name}** ({device_address})")
         with col2:
-            if st.button("Connect", key=f"connect_{device_address}"):
+            if st.button("Connect", key=f"connect_{i}"):
                 with st.spinner(f"Connecting to {device_name}..."):
                     if connect_to_device(device_address):
                         st.success(f"Connected to {device_name}")
-                        st.experimental_rerun()
+                        st.rerun()
 
-# Display connected device info if connected
+# Display connection status
 if st.session_state.connected:
     st.success(f"Connected to device: {st.session_state.device_address}")
+    
+    # WebSocket status indicator
+    if st.session_state.ws_active:
+        st.info("Live data stream active")
+    else:
+        st.warning("Live data stream inactive")
     
     # Data display section
     st.header("Real-time Data")
     
-    # Create placeholder for real-time metrics
+    # Display metrics
     col1, col2 = st.columns(2)
-    
     with col1:
-        heart_rate_container = st.container()
-    
+        st.metric("Heart Rate", st.session_state.latest_heart_rate)
     with col2:
-        steps_container = st.container()
+        st.metric("Steps", st.session_state.latest_steps)
     
-    # Create placeholders for charts
-    heart_rate_chart = st.empty()
-    steps_chart = st.empty()
+    # Auto-refresh button
+    if st.button("Refresh Data"):
+        st.rerun()
     
-    # Function to update the UI (called by a separate thread)
-    def update_ui():
-        while st.session_state.connected:
-            try:
-                if not st.session_state.data_history.empty:
-                    # Get the most recent data
-                    latest_data = st.session_state.data_history.iloc[-1]
-                    
-                    # Update metrics
-                    with heart_rate_container:
-                        st.metric("Heart Rate", f"{latest_data['heart_rate']} BPM" if pd.notna(latest_data['heart_rate']) else "N/A")
-                    
-                    with steps_container:
-                        st.metric("Steps", f"{latest_data['steps']}" if pd.notna(latest_data['steps']) else "N/A")
-                    
-                    # Update charts if we have enough data
-                    if len(st.session_state.data_history) > 1:
-                        # Heart Rate Chart
-                        fig_hr = px.line(
-                            st.session_state.data_history,
-                            x='timestamp',
-                            y='heart_rate',
-                            title='Heart Rate Over Time'
-                        )
-                        fig_hr.update_layout(height=300)
-                        heart_rate_chart.plotly_chart(fig_hr, use_container_width=True)
-                        
-                        # Steps Chart
-                        fig_steps = px.line(
-                            st.session_state.data_history,
-                            x='timestamp',
-                            y='steps',
-                            title='Steps Over Time'
-                        )
-                        fig_steps.update_layout(height=300)
-                        steps_chart.plotly_chart(fig_steps, use_container_width=True)
-                
-                # Update every second
-                time.sleep(1)
-            
-            except Exception as e:
-                logger.error(f"UI update error: {e}")
-                time.sleep(1)
+    # Add automatic refresh using an empty placeholder and time
+    refresh_placeholder = st.empty()
+    with refresh_placeholder.container():
+        if st.session_state.ws_active:
+            st.caption(f"Next automatic refresh in: {5} seconds")
     
-    # Start UI update thread if not already running
-    if 'ui_thread' not in st.session_state or not st.session_state.ui_thread.is_alive():
-        st.session_state.ui_thread = threading.Thread(target=update_ui, daemon=True)
-        st.session_state.ui_thread.start()
+    # Charts
+    if not st.session_state.data_history.empty:
+        # Heart Rate Chart
+        st.subheader("Heart Rate Over Time")
+        fig_hr = px.line(
+            st.session_state.data_history,
+            x='timestamp',
+            y='heart_rate',
+            title='Heart Rate (BPM)'
+        )
+        fig_hr.update_layout(height=300)
+        st.plotly_chart(fig_hr, use_container_width=True)
+        
+        # Steps Chart
+        st.subheader("Steps Over Time")
+        fig_steps = px.line(
+            st.session_state.data_history,
+            x='timestamp',
+            y='steps',
+            title='Step Count'
+        )
+        fig_steps.update_layout(height=300)
+        st.plotly_chart(fig_steps, use_container_width=True)
+    else:
+        st.info("No data recorded yet. The charts will appear once data is received.")
     
     # Data export section
     st.header("Data Export")
@@ -290,6 +343,11 @@ if st.session_state.connected:
     else:
         st.info("No data collected yet")
 
+    # Set up automatic refresh if connected
+    if st.session_state.ws_active:
+        time.sleep(3)  # Wait a few seconds
+        st.rerun()
+
 # Display instructions
 with st.expander("How to use this application"):
     st.markdown("""
@@ -298,7 +356,7 @@ with st.expander("How to use this application"):
     1. Click **Scan for Devices** to find nearby Bluetooth devices
     2. Select your smartwatch from the list and click **Connect**
     3. Once connected, you'll see real-time heart rate and step count data
-    4. The data will be plotted on graphs automatically
+    4. The data will automatically refresh and plot on graphs
     5. You can download the collected data as a CSV file
     6. Click **Disconnect** when you're done
     
