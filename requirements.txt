@@ -1,17 +1,122 @@
-# requirements.txt
+# # requirements.txt
 
-# Backend dependencies
-fastapi
-uvicorn
+# # Backend dependencies
+# fastapi
+# uvicorn
+# bleak
+# pydantic
+# websockets
+# python-multipart
+
+# # Frontend dependencies
+# streamlit
+# requests
+# pandas
+# plotly
+# websocket-client
+# nest-asyncio
+
+
+absl-py
+altair
+annotated-types
+anyio
+appnope
+asttokens
+attrs
 bleak
-pydantic
-websockets
-python-multipart
-
-# Frontend dependencies
-streamlit
-requests
-pandas
-plotly
-websocket-client
+blinker
+cachetools
+certifi
+charset-normalizer
+click
+comm
+contourpy
+cycler
+debugpy
+decorator
+executing
+fastapi
+fonttools
+gitdb
+GitPython
+h11
+h5py
+idna
+ipykernel
+ipython
+ipython_pygments_lexers
+jedi
+Jinja2
+joblib
+jsonschema
+jsonschema-specifications
+jupyter_client
+jupyter_core
+keras
+keras-utils
+kiwisolver
+markdown-it-py
+MarkupSafe
+matplotlib
+matplotlib-inline
+mdurl
+ml_dtypes
+namex
+narwhals
 nest-asyncio
+numpy
+optree
+packaging
+pandas
+parso
+pexpect
+pillow
+platformdirs
+plotly
+prompt_toolkit
+protobuf
+psutil
+ptyprocess
+pure_eval
+pyarrow
+pydantic
+pydantic_core
+pydeck
+Pygments
+pyobjc-core
+pyobjc-framework-Cocoa
+pyobjc-framework-CoreBluetooth
+pyobjc-framework-libdispatch
+pyparsing
+python-dateutil
+python-multipart
+pytz
+pyzmq
+referencing
+requests
+rich
+rpds-py
+scikit-base
+scikit-learn
+scipy
+six
+sktime
+smmap
+sniffio
+stack-data
+starlette
+streamlit
+tenacity
+threadpoolctl
+toml
+tornado
+traitlets
+typing-inspection
+typing_extensions
+tzdata
+urllib3
+uvicorn
+wcwidth
+websocket-client
+websockets

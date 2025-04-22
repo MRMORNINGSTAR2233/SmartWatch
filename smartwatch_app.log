@@ -1,0 +1,111 @@
+2025-04-22 04:06:50,496 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:06:50,499 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:06:53,684 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:06:53,686 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:06:53,826 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:06:53,828 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:06:53,833 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:06:53,833 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:07:22,739 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:07:29,668 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:07:29,671 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:07:29,819 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:07:29,820 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:07:29,825 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:07:29,825 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:10:16,970 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:10:24,093 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:10:24,096 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:10:24,241 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:10:24,242 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:10:24,246 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:10:24,246 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:10:30,080 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:10:33,642 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:10:33,643 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:10:33,645 - smartwatch.main - INFO - Scanning for Bluetooth devices...
+2025-04-22 04:10:42,058 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:10:42,071 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:10:43,059 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:10:43,061 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:12:52,249 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:12:52,350 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:12:56,112 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:12:56,114 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:12:56,286 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:12:56,287 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:12:56,293 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:12:56,293 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:13:01,345 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:13:04,546 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:13:04,548 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:13:04,691 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:13:04,692 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:13:04,696 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:13:04,696 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:13:07,626 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:13:10,801 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:13:10,803 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:13:10,947 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:13:10,948 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:13:10,952 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:13:10,952 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:13:26,531 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:13:30,027 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:13:30,030 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:13:30,179 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:13:30,180 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:13:30,184 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:13:30,185 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:13:37,205 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:13:42,489 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:13:42,490 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:13:42,492 - smartwatch.main - INFO - Scanning for Bluetooth devices...
+2025-04-22 04:13:50,496 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:13:50,500 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:13:52,308 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:13:52,310 - smartwatch.main - INFO - WebSocket client connected. Total connections: 1
+2025-04-22 04:17:29,541 - smartwatch.main - INFO - WebSocket client disconnected. Remaining: 0
+2025-04-22 04:17:29,642 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:17:33,323 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:17:33,326 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:17:33,464 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:17:33,465 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:17:33,470 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:17:33,470 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:17:53,482 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:17:57,092 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:17:57,095 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:17:57,235 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:17:57,236 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:17:57,241 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:17:57,241 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:17:59,970 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:18:03,128 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:18:03,131 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:18:03,265 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:18:03,266 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:18:03,270 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:18:03,271 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:18:08,723 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:18:11,872 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:18:11,874 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:18:12,022 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:18:12,024 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:18:12,028 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:18:12,028 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:20:18,253 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:20:21,941 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:20:21,944 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:20:22,084 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:20:22,086 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:20:22,091 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:20:22,091 - smartwatch.main - INFO - API started successfully.
+2025-04-22 04:20:27,151 - smartwatch.main - INFO - API shutdown complete.
+2025-04-22 04:20:30,684 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:20:30,687 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:20:30,836 - absl - WARNING - Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2025-04-22 04:20:30,837 - smartwatch.main - INFO - Successfully loaded fall detection model from fall_detection_model.h5
+2025-04-22 04:20:30,842 - smartwatch.main - INFO - Database initialized successfully
+2025-04-22 04:20:30,842 - smartwatch.main - INFO - API started successfully.
+2025-04-22 06:42:58,434 - smartwatch.main - INFO - API shutdown complete.
